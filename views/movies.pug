@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+  p Välkommen till #{title}
+
+  p Lista alla filmer - 
+    a(href="/movies/create") Ny film
+ 
+  each movie in movies 
+    div 
+      h2 
+        a(href="/movies/" + movie.id) #{movie.title}
+        | (#{movie.release_year}) #{movie.imdb_score}
+      p #{movie.tagline}

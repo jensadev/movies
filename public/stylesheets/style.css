@@ -1,0 +1,23 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+
+a {
+  color: #00B7FF; }
+
+.form {
+  display: flex;
+  flex-direction: column; }
+  .form input {
+    margin-bottom: 1rem; }
+
+.alert {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f5f5f5; }
+  .alert p {
+    padding: 1rem; }
+
+/*# sourceMappingURL=style.css.map */

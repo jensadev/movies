@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Ny film 
+
+  form.form(action="/movies", method="post") 
+    label(for="title") Filmens titel:  
+    input(type="text", name="title" id="title")
+    label(for="tagline") Filmens tagline:  
+    input(type="text", name="tagline" id="tagline")
+    label(for="year") Året filmen släpptes:  
+    input(type="text", name="year" id="year")
+    label(for="imdb_score") IMDB poäng:  
+    input(type="text", name="imdb_score" id="imdb_score")
+    input(type="submit", value="Skapa film")

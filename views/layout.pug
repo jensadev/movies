@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    block nav
+      include nav
+    block content
+    block flash 
+      if messages
+        .alert
+          each message in messages 
+            p= message

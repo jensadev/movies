@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Edit film 
+
+  form.form(action="/movies/" + movie.id, method="post") 
+    label(for="title") Filmens titel:  
+    input(type="text", name="title" id="title" value=movie.title)
+    label(for="tagline") Filmens tagline:  
+    input(type="text", name="tagline" id="tagline" value=movie.tagline)
+    label(for="year") Året filmen släpptes:  
+    input(type="text", name="year" id="year" value=movie.release_year)
+    label(for="imdb_score") IMDB poäng:  
+    input(type="text", name="imdb_score" id="imdb_score" value=movie.imdb_score)
+    input(type="submit", value="Redigera film")
