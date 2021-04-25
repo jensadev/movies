@@ -23,23 +23,35 @@ router.get("/", async function (req, res, next) {
 });
 
 router.post("/", async function (req, res, next) {
-  console.table(req.body);
+  // console.table(req.body);
   // validation
-  // post ger nu fel för att vi inte spreadar
-  const sql = `INSERT INTO movies (title, tagline, release_year, imdb_score) VALUES (?,?,?,?)`;
-  const newMovie = await query(sql, [
-    req.body.title,
-    req.body.tagline,
-    req.body.year,
-    req.body.imdb_score,
-  ]);
 
-  if (newMovie.insertId > 0) {
-    // typiskt... stava kan jag inte heller
-    // fel :) vi har inte datan
-    // res.render('movie', { title: 'Filmdatabasen', movie: newMovie });
-    // men vi kan använda den andra routen med det id vi har
-    res.redirect("/movies/" + newMovie.insertId);
+  try {
+    const select = `SELECT id FROM directors WHERE name = ?`;
+    let director = await query(select, [req.body.director]);
+    if (director.length === 0) {
+      const sql = `INSERT INTO directors SET name= ?`;
+      director = await query(sql, [req.body.director]);
+    }
+
+    const sql = `INSERT INTO 
+    movies (title, tagline, release_year, imdb_score, director_id) 
+    VALUES (?,?,?,?,?)`;
+    const newMovie = await query(sql, [
+      req.body.title,
+      req.body.tagline,
+      req.body.year,
+      req.body.imdb_score,
+      director.insertId || director[0].id,
+    ]);
+
+    if (newMovie.insertId > 0) {
+      req.flash("info", "Film med id: " + newMovie.insertId + " skapad.");
+      res.redirect("/movies/" + newMovie.insertId);
+    }
+  } catch (err) {
+    console.table(err);
+    next(err);
   }
   // denna route sparar filmen i databasen
 });
@@ -63,7 +75,7 @@ router.get("/:id", param("id").isInt(), async function (req, res, next) {
     res.render("movie", {
       title: "Filmdatabasen",
       movie: movie[0],
-      messages: req.flash("info")
+      messages: req.flash("info"),
     });
   } catch (err) {
     console.table(err);

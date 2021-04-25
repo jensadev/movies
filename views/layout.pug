@@ -2,6 +2,7 @@ doctype html
 html
   head
     title= title
+    link(rel='stylesheet', href='/stylesheets/custom.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     block nav
@@ -9,6 +10,6 @@ html
     block content
     block flash 
       if messages
-        .alert
-          each message in messages 
-            p= message
+        .position-absolute.bottom-0.start-0
+          each message in messages
+            .alert= message

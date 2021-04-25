@@ -1,15 +1,17 @@
 extends layout
 
 block content
-  h1= title
-  p Välkommen till #{title}
+  main.container
+    h1= title
+    p Välkommen till #{title}
 
-  p Lista alla filmer - 
-    a(href="/movies/create") Ny film
- 
-  each movie in movies 
-    div 
-      h2 
-        a(href="/movies/" + movie.id) #{movie.title}
-        | (#{movie.release_year}) #{movie.imdb_score}
-      p #{movie.tagline}
+    p Lista alla filmer - 
+      a(href="/movies/create") Ny film
+  
+    each movie in movies 
+      .card 
+        .card-body
+          h2.h5.card-title
+            a(href="/movies/" + movie.id) #{movie.title}
+          h3.h6.card-subtitle (#{movie.release_year}) #{movie.imdb_score}
+          p.card-text #{movie.tagline}
