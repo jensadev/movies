@@ -10,7 +10,12 @@ router.get("/", async function (req, res, next) {
   // console.table(req.flash('info'));
   // verkar som att meddelandet försvinner efter det hämtats
   try {
-    const movies = await query(`SELECT * FROM movies ORDER BY imdb_score DESC`);
+    const movies = await query(
+      `SELECT movies.*, directors.name AS director
+      FROM movies 
+      JOIN directors ON directors.id = movies.director_id
+      ORDER BY imdb_score DESC`);
+
     res.render("movies", {
       title: "Filmdatabasen",
       movies: movies,
@@ -25,21 +30,40 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   console.table(req.body);
   // validation
-  // post ger nu fel för att vi inte spreadar
-  const sql = `INSERT INTO movies (title, tagline, release_year, imdb_score) VALUES (?,?,?,?)`;
-  const newMovie = await query(sql, [
-    req.body.title,
-    req.body.tagline,
-    req.body.year,
-    req.body.imdb_score,
-  ]);
+  try {
+    // vi kan inte spara regissörens namn som ett namn i movies utan vi behöver ett id
+    // eftersom vi vet att tabellen directors inte tillåter duplicering heller så kan vi inte 
+    // bara spara direkt i tabellen
 
-  if (newMovie.insertId > 0) {
-    // typiskt... stava kan jag inte heller
-    // fel :) vi har inte datan
-    // res.render('movie', { title: 'Filmdatabasen', movie: newMovie });
-    // men vi kan använda den andra routen med det id vi har
-    res.redirect("/movies/" + newMovie.insertId);
+    const select = `SELECT id FROM directors WHERE name = ?`;
+    let director = await query(select, [req.body.director]);
+
+    if (director.length === 0) {
+      const sql = `INSERT INTO directors SET name= ?`;
+      director = await query(sql, [req.body.director]);
+    }
+
+    console.log(director); // direktorn finns eftersom vi fick ett id // tomt finns inte
+    // en ny director gav oss inserId men existerande director har id, viktigt
+
+    // nu kan vi skapa filmen
+
+    const sql = `INSERT INTO movies (title, tagline, release_year, imdb_score, director_id) VALUES (?,?,?,?,?)`;
+    const newMovie = await query(sql, [
+      req.body.title,
+      req.body.tagline,
+      req.body.year,
+      req.body.imdb_score,
+      director.insertId || director[0].id
+    ]);
+  
+    if (newMovie.insertId > 0) {
+      req.flash("info", "Film med id: " + newMovie.insertId + " skapad.");
+      res.redirect("/movies/" + newMovie.insertId);
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
   // denna route sparar filmen i databasen
 });
