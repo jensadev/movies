@@ -10,8 +10,15 @@ block content
   each movie in movies 
     div 
       h2 
-        a(href="/movies/" + movie.id) #{movie.title}
-        | (#{movie.release_year}) #{movie.imdb_score}
+        a(href="/movies/" + movie.id) #{movie.title} 
+        | (#{movie.release_year}) 
+        if movie.genrelist 
+          each genre, index in movie.genrelist 
+            if movie.genrelist.length -1 === index
+              | #{genre.genre} 
+            else 
+              | #{genre.genre}, 
+        | #{movie.imdb_score}
       p #{movie.tagline}
       p Director: 
         a(href="/directors/" + movie.director_id) #{movie.director}

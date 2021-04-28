@@ -10,15 +10,45 @@ router.get("/", async function (req, res, next) {
   // console.table(req.flash('info'));
   // verkar som att meddelandet försvinner efter det hämtats
   try {
-    const movies = await query(
-      `SELECT movies.*, directors.name AS director
-      FROM movies 
-      JOIN directors ON directors.id = movies.director_id
-      ORDER BY imdb_score DESC`);
+    // const movies = await query(
+    //   `SELECT movies.*, directors.name AS director
+    //   FROM movies
+    //   JOIN directors ON directors.id = movies.director_id
+    //   ORDER BY imdb_score DESC`);
+
+    const sql = `
+      SELECT m.*,
+      (SELECT GROUP_CONCAT(g.id, ';', g.name)
+        FROM movie_has_genres mhg
+        LEFT JOIN genres g ON mhg.genre_id = g.id
+        WHERE mhg.movie_id = m.id
+        ORDER BY g.name DESC
+      ) as genrelist,
+      d.name AS director
+      FROM movies m
+      LEFT OUTER JOIN directors d on m.director_id = d.id
+      `;
+    
+    const movies = await query(sql);
+
+    const newMovies = movies.map((movie) => {
+      let genres = movie.genrelist?.split(',');
+      if (genres) {
+        let gfix = genres.map(g => {
+          g = g.split(';');
+          return {
+            id: g[0],
+            genre: g[1]
+          }
+        });
+        movie.genrelist = gfix; 
+      }
+      return movie;
+    });
 
     res.render("movies", {
       title: "Filmdatabasen",
-      movies: movies,
+      movies: newMovies,
       messages: req.flash("info"),
     });
   } catch (err) {
@@ -32,7 +62,7 @@ router.post("/", async function (req, res, next) {
   // validation
   try {
     // vi kan inte spara regissörens namn som ett namn i movies utan vi behöver ett id
-    // eftersom vi vet att tabellen directors inte tillåter duplicering heller så kan vi inte 
+    // eftersom vi vet att tabellen directors inte tillåter duplicering heller så kan vi inte
     // bara spara direkt i tabellen
 
     const select = `SELECT id FROM directors WHERE name = ?`;
@@ -54,9 +84,9 @@ router.post("/", async function (req, res, next) {
       req.body.tagline,
       req.body.year,
       req.body.imdb_score,
-      director.insertId || director[0].id
+      director.insertId || director[0].id,
     ]);
-  
+
     if (newMovie.insertId > 0) {
       req.flash("info", "Film med id: " + newMovie.insertId + " skapad.");
       res.redirect("/movies/" + newMovie.insertId);
@@ -87,7 +117,7 @@ router.get("/:id", param("id").isInt(), async function (req, res, next) {
     res.render("movie", {
       title: "Filmdatabasen",
       movie: movie[0],
-      messages: req.flash("info")
+      messages: req.flash("info"),
     });
   } catch (err) {
     console.table(err);
