@@ -10,7 +10,7 @@ block content
   each movie in movies 
     div 
       h2 
-        a(href="/movies/" + movie.id) #{movie.title}
+        a(href="/movies/" + movie.id) #{movie.title} 
         | (#{movie.release_year}) #{movie.imdb_score}
       p #{movie.tagline}
       p Director: 

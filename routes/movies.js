@@ -13,7 +13,7 @@ router.get("/", async function (req, res, next) {
     const movies = await query(
       `SELECT movies.*, directors.name AS director
       FROM movies 
-      JOIN directors ON directors.id = movies.director_id
+      LEFT OUTER JOIN directors ON directors.id = movies.director_id
       ORDER BY imdb_score DESC`);
 
     res.render("movies", {
