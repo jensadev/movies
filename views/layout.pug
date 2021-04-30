@@ -9,6 +9,10 @@ html
     block content
     block flash 
       if messages
-        .alert
+        .alert.alert-success
           each message in messages 
             p= message
+      if errors
+        .alert.alert-error
+          each error in errors 
+            p= error

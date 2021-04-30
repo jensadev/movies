@@ -1,10 +1,14 @@
 extends layout
 
 block content
-  h1= movie.title
-  p infos
+  main.container
+    h1= movie.title
+    nav 
+      ul.nav 
+        li 
+          a(href="/movies/" + movie.id + "/update") Redigera filmen 
+        li 
+          a(href="/movies/" + movie.id + "/delete") ta bort filmen
 
-  p 
-    a(href="/movies/" + movie.id + "/update") Redigera filmen 
-  p 
-    a(href="/movies/" + movie.id + "/delete") ta bort filmen
+    h2 infos
+    p= movie.tagline
