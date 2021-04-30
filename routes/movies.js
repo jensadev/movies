@@ -10,12 +10,19 @@ router.get('/', async function (req, res, next) {
     // console.table(req.flash('info'));
     // verkar som att meddelandet försvinner efter det hämtats
     try {
-        const movies = await query(
-            `SELECT movies.*, directors.name AS director
-            FROM movies 
-            LEFT OUTER JOIN directors ON directors.id = movies.director_id
-            ORDER BY imdb_score DESC`
-        );
+        const sql = `SELECT m.*, 
+        (SELECT GROUP_CONCAT(g.name)
+            FROM movie_genres mg
+            LEFT JOIN genres g ON mg.genre_id = g.id
+            WHERE mg.movie_id = m.id
+            ORDER BY g.name DESC
+        ) AS genre_list,
+        d.name AS director
+        FROM movies m
+        LEFT OUTER JOIN directors d ON d.id = m.director_id
+        ORDER BY imdb_score DESC`;
+
+        const movies = await query(sql);
 
         res.render('movies', {
             title: 'Filmdatabasen',
@@ -33,9 +40,42 @@ router.post('/', async function (req, res, next) {
     console.table(req.body);
     // validation
     try {
-        // vi kan inte spara regissörens namn som ett namn i movies utan vi behöver ett id
-        // eftersom vi vet att tabellen directors inte tillåter duplicering heller så kan vi inte
-        // bara spara direkt i tabellen
+        // nu blir det något krångligt
+        // vi behöver först skapa genres i genres OM de inte finns
+        // annars behöver vi dess id
+
+        // när det är gjort så behöver vi skapa relationen
+        // mellan movie_id och genre_id i kopplingstabellen
+
+        // genres kommer som en komma separerad lista till oss
+        const genres = req.body.genres.split(',');
+
+        const genreIds = genres.map(async (genre) => {
+            // vi kan använd map för att loopa igenom listan med genrer och skapa nya poster
+            genre = genre.toLowerCase().trim(); // städa upp
+            if (genre.length > 0) {
+                // finns den i database
+                const exists = await query(
+                    `SELECT id FROM genres WHERE name = ?`,
+                    [genre]
+                );
+                if (exists.length > 0) {
+                    // om genre finns returnera id till listan
+                    // vi får en promise här som bi behöver hantera
+                    return exists[0].id;
+                }
+
+                const newGenre = await query(
+                    `INSERT INTO genres (name) VALUES(?)`,
+                    [genre]
+                );
+                if (newGenre.insertId > 0) {
+                    return newGenre.insertId;
+                }
+
+                throw 'Fel';
+            }
+        });
 
         const select = `SELECT id FROM directors WHERE name = ?`;
         let director = await query(select, [req.body.director]);
@@ -45,10 +85,8 @@ router.post('/', async function (req, res, next) {
             director = await query(sql, [req.body.director]);
         }
 
-        console.log(director); // direktorn finns eftersom vi fick ett id // tomt finns inte
-        // en ny director gav oss inserId men existerande director har id, viktigt
-
         // nu kan vi skapa filmen
+        // det är ingen ändring som görs i movie tabellen, kom ihåg det
 
         const sql = `INSERT INTO movies (title, tagline, release_year, imdb_score, director_id) VALUES (?,?,?,?,?)`;
         const newMovie = await query(sql, [
@@ -60,6 +98,17 @@ router.post('/', async function (req, res, next) {
         ]);
 
         if (newMovie.insertId > 0) {
+            // filmen har skapats
+            genreIds.map((genreId) => {
+                genreId.then(async (id) => {
+                    // vi har id, vi behöver nu movie id för att skapa kopplingen
+                    await query(
+                        `INSERT INTO movie_genres (movie_id, genre_id) VALUES (?,?)`,
+                        [newMovie.insertId, id]
+                    );
+                });
+            });
+
             req.flash('info', 'Film med id: ' + newMovie.insertId + ' skapad.');
             res.redirect('/movies/' + newMovie.insertId);
         }
@@ -82,9 +131,21 @@ router.get('/:id', param('id').isInt(), async function (req, res, next) {
         return res.status(400).json({ errors: errors.array() });
     }
 
+    // dum, fel route... det börjar bli för rörigt i denna route fil...
+
     // hämta en film från db mmed director
     try {
-        const sql = `SELECT * FROM movies WHERE id=?`;
+        const sql = `SELECT m.*, 
+        (SELECT GROUP_CONCAT(g.name)
+            FROM movie_genres mg
+            LEFT JOIN genres g ON mg.genre_id = g.id
+            WHERE mg.movie_id = m.id
+            ORDER BY g.name DESC
+        ) AS genre_list,
+        d.name AS director
+        FROM movies m
+        LEFT OUTER JOIN directors d ON d.id = m.director_id
+        WHERE m.id = ?`;
         const movie = await query(sql, [req.params.id]);
 
         res.render('movie', {
@@ -108,10 +169,17 @@ router.get('/:id/update', param('id').isInt(), async function (req, res, next) {
 
     // hämta en film från db så vi kan uppdatera dess värden
     try {
-        const sql = `SELECT movies.*, directors.name AS director
-      FROM movies 
-      LEFT OUTER JOIN directors ON directors.id = movies.director_id
-      WHERE movies.id = ?`;
+        const sql = `SELECT m.*, 
+        (SELECT GROUP_CONCAT(g.name)
+            FROM movie_genres mg
+            LEFT JOIN genres g ON mg.genre_id = g.id
+            WHERE mg.movie_id = m.id
+            ORDER BY g.name DESC
+        ) AS genre_list,
+        d.name AS director
+        FROM movies m
+        LEFT OUTER JOIN directors d ON d.id = m.director_id
+        WHERE m.id = ?`;
         const movie = await query(sql, [req.params.id]);
 
         // men om det inte finns en film då?
@@ -131,6 +199,53 @@ router.post('/:id', param('id').isInt(), async function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
+    }
+
+    // nu kan vi återanvända en del från insert
+    const genres = req.body.genres.split(',');
+
+    const genreIds = genres.map(async (genre) => {
+        // vi kan använd map för att loopa igenom listan med genrer och skapa nya poster
+        genre = genre.toLowerCase().trim(); // städa upp
+        if (genre.length > 0) {
+            // finns den i database
+            const exists = await query(`SELECT id FROM genres WHERE name = ?`, [
+                genre
+            ]);
+            if (exists.length > 0) {
+                // om genre finns returnera id till listan
+                // vi får en promise här som bi behöver hantera
+                return exists[0].id;
+            }
+
+            const newGenre = await query(
+                `INSERT INTO genres (name) VALUES(?)`,
+                [genre]
+            );
+            if (newGenre.insertId > 0) {
+                return newGenre.insertId;
+            }
+
+            throw 'Fel';
+        }
+    });
+
+    // filmens id är känt så vi kan uppdatera genres direkt
+    // och är det inga så gör inget
+    // detta bör fungera, sen kanske det inte är bästa sättet...
+    if (genreIds.length > 0) {
+        await query(`DELETE FROM movie_genres WHERE movie_id = ?`, [
+            req.params.id
+        ]);
+
+        genreIds.map((genreId) => {
+            genreId.then(async (id) => {
+                await query(
+                    `INSERT INTO movie_genres (movie_id, genre_id) VALUES (?,?)`,
+                    [req.params.id, id]
+                );
+            });
+        });
     }
 
     // precis som för filmen behöver vi undersöka om det finns en director, annars skapa

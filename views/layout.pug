@@ -9,10 +9,10 @@ html
     block content
     block flash 
       if messages
-        .alert.alert-success
+        .alert.alert-success(onclick="this.remove()")
           each message in messages 
             p= message
       if errors
-        .alert.alert-error
+        .alert.alert-error(onclick="this.remove()")
           each error in errors 
             p= error

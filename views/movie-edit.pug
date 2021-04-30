@@ -11,6 +11,8 @@ block content
       input(type="text", name="tagline" id="tagline" value=movie.tagline)
       label(for="director") Filmens regissör:
       input(type="text", name="director" id="director" value=movie.director)
+      label(for="year") Filmens genre(r), avgränsa med komma: 
+      input(type="text" name="genres"  pattern="^[a-zA-Z- ,]+" value=movie.genre_list)
       label(for="year") Året filmen släpptes:  
       input(type="text", name="year" id="year" value=movie.release_year)
       label(for="imdb_score") IMDB poäng:  

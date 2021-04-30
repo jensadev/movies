@@ -8,8 +8,8 @@ block content
     each movie in movies 
       div 
         h2 
-          a(href="/movies/" + movie.id) #{movie.title} 
-          | (#{movie.release_year}) #{movie.imdb_score}
+          a(href="/movies/" + movie.id) #{movie.title}
+          |  (#{movie.release_year}) #{movie.genre_list && movie.genre_list.split(',').join(', ')} #{movie.imdb_score}
         p #{movie.tagline}
         p Regissör: 
           a(href="/directors/" + movie.director_id) #{movie.director}
