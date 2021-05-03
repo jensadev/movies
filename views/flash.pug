@@ -1,0 +1,13 @@
+mixin flash(type, messages)
+    div(class='alert alert-' + type + ' alert-dismissible fade show' onclick="this.remove()")
+        each message in messages 
+            p= message
+
+block flash
+    .alert-container
+        if messages
+            if messages.length > 0
+                +flash('success', messages)
+        if errors
+            if errors.length > 0
+                +flash('danger', errors)

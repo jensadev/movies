@@ -24,9 +24,6 @@ a {
     margin-bottom: 1rem; }
 
 .alert {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%; }
   .alert-success {
     background-color: #caffca; }
@@ -34,5 +31,11 @@ a {
     background-color: #ffcaca; }
   .alert p {
     padding: 1rem; }
+
+.alert-container {
+  position: fixed;
+  bottom: 5px;
+  left: 2%;
+  width: 96%; }
 
 /*# sourceMappingURL=style.css.map */
