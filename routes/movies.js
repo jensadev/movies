@@ -32,7 +32,8 @@ router.get('/', async function (req, res, next) {
         });
     } catch (err) {
         console.table(err);
-        next(err);
+        req.flash('error', 'Någonting gick snett, var god försök igen.');
+        next();
     }
 });
 

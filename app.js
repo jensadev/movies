@@ -36,7 +36,7 @@ app.use(
     sassMiddleware({
         src: path.join(__dirname, 'public'),
         dest: path.join(__dirname, 'public'),
-        indentedSyntax: true, // true = .sass and false = .scss
+        indentedSyntax: false, // true = .sass and false = .scss
         sourceMap: true
     })
 );
@@ -58,7 +58,10 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.render('error', {
+        messages: req.flash('info'),
+        errors: req.flash('error')
+    });
 });
 
 module.exports = app;

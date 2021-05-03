@@ -2,17 +2,10 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/custom.css')
   body
     block nav
       include nav
     block content
     block flash 
-      if messages
-        .alert.alert-success(onclick="this.remove()")
-          each message in messages 
-            p= message
-      if errors
-        .alert.alert-error(onclick="this.remove()")
-          each error in errors 
-            p= error
+      include flash.pug
