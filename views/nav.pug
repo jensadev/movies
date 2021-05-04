@@ -1,6 +1,12 @@
+mixin nav-link(href, name)
+  if name === title
+    a.nav-link.active(href=href)= name
+  else
+    a.nav-link(href=href)= name
+
 block nav 
-  nav.navbar.navbar-expand-lg.navbar-light
-    .container
+  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+    .container-fluid
       a.navbar-brand(href="/") Filmdatabasen
       button.navbar-toggler(
         type="button"
@@ -13,8 +19,10 @@ block nav
       .collapse.navbar-collapse#navbar
         ul.navbar-nav.me-auto.mb-2.mb-lg-0
           li.nav-item 
-            a.nav-link(href="/movies") Filmer 
+            //- a.nav-link(href="/movies") Filmer 
+            +nav-link('/movies', 'Filmer')
           li.nav-item 
-            a.nav-link(href="/movies/create") Ny film
+            +nav-link('/movies/create', 'Ny film')
+            //- a.nav-link(href="/movies/create") Ny film
 
 //- aja vi nöjer oss så nu

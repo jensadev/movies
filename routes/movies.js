@@ -78,13 +78,15 @@ router.post('/', async function (req, res, next) {
             }
         });
 
-        const select = `SELECT id FROM directors WHERE name = ?`;
+        const select = `SELECT id FROM directors WHERE name = ?`; // index name
         let director = await query(select, [req.body.director]);
+        // director[0].id
 
         if (director.length === 0) {
             const sql = `INSERT INTO directors SET name= ?`;
             director = await query(sql, [req.body.director]);
         }
+        // director.insertId
 
         // nu kan vi skapa filmen
         // det är ingen ändring som görs i movie tabellen, kom ihåg det

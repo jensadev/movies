@@ -1,20 +1,31 @@
 extends layout
 
+block head 
+  -var title = 'Redigera film'
+  title Filmdatabasen - #{title} - #{movie.title}
+
 block content
   main.container
-    h1 Edit film 
+    .my-3.p-3.bg-body.rounded.shadow-sm
+      h1.h5.border-bottom.pb-2.mb-0 Edit film 
 
-    form.form(action="/movies/" + movie.id, method="post") 
-      label(for="title") Filmens titel:  
-      input(type="text", name="title" id="title" value=movie.title)
-      label(for="tagline") Filmens tagline:  
-      input(type="text", name="tagline" id="tagline" value=movie.tagline)
-      label(for="director") Filmens regissör:
-      input(type="text", name="director" id="director" value=movie.director)
-      label(for="year") Filmens genre(r), avgränsa med komma: 
-      input(type="text" name="genres"  pattern="^[a-zA-Z- ,]+" value=movie.genre_list)
-      label(for="year") Året filmen släpptes:  
-      input(type="text", name="year" id="year" value=movie.release_year)
-      label(for="imdb_score") IMDB poäng:  
-      input(type="text", name="imdb_score" id="imdb_score" value=movie.imdb_score)
-      button(type="submit") Redigera film
+      form.pt-3(action="/movies/" + movie.id, method="post") 
+        .mb-3
+          label.form-label(for="title") Filmens titel:  
+          input.form-control(type="text", name="title" id="title" value=movie.title)
+        .mb-3
+          label.form-label(for="tagline") Filmens tagline:  
+          input.form-control(type="text", name="tagline" id="tagline" value=movie.tagline)
+        .mb-3
+          label.form-label(for="director") Filmens regissör:
+          input.form-control(type="text", name="director" id="director" value=movie.director)
+        .mb-3
+          label.form-label(for="year") Filmens genre(r), avgränsa med komma: 
+          input.form-control(type="text" name="genres"  pattern="^[a-zA-Z- ,]+" value=movie.genre_list)
+        .mb-3
+          label.form-label(for="year") Året filmen släpptes:  
+          input.form-control(type="text", name="year" id="year" value=movie.release_year)
+        .mb-3
+          label.form-label(for="imdb_score") IMDB poäng:  
+          input.form-control(type="text", name="imdb_score" id="imdb_score" value=movie.imdb_score)
+        button.btn.btn-primary(type="submit") Redigera film

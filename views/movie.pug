@@ -1,14 +1,30 @@
 extends layout
 
+block head
+  -var title = 'Film'
+  title Filmdatabasen - #{title} - #{movie.title} 
+
 block content
   main.container
-    h1= movie.title
-    nav 
-      ul.nav 
-        li 
-          a(href="/movies/" + movie.id + "/update") Redigera filmen 
-        li 
-          a(href="/movies/" + movie.id + "/delete") ta bort filmen
+    .my-3.p-3.bg-body.rounded.shadow-sm
+      h1.h5.border-bottom.pb-2.mb-0 #{movie.title} (#{movie.release_year})
+      .w-100.pt-3
+        img.w-100(src="https://via.placeholder.com/780x439", alt="")
+      .text-muted.pt-3
+        p.pb-3.mb-0
+          strong.d-block.text-gray-dark #{movie.genre_list && movie.genre_list.split(',').join(', ')} 
+            svg.star(xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="#fd7e14" class="bi bi-star-fill" viewBox="0 0 16 16" alt="IMDB score") 
+              path(d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z")
+            |  #{movie.imdb_score}
+        p.pb-3.mb-0.border-bottom #{movie.tagline}
+        p.pt-3 Regissör: 
+          a(href="/directors/" + movie.director_id) #{movie.director}
 
-    h2 infos
-    p= movie.tagline
+    .my-3.p-3.bg-body.rounded.shadow-sm
+      h1.h5.border-bottom.pb-2.mb-0 Redigera
+      nav.d-flex.text-muted.pt-3
+        ul.navbar-nav 
+          li.nav-item 
+            a.nav-link(href="/movies/" + movie.id + "/update") Redigera filmen 
+          li.nav-item 
+            a.nav-link(href="/movies/" + movie.id + "/delete") Ta bort filmen

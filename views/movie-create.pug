@@ -1,26 +1,31 @@
 extends layout
 
+block head 
+  -var title = 'Ny film'
+  title Filmdatabasen - #{title}
+
 block content
   main.container
-    h1 Ny film 
+    .my-3.p-3.bg-body.rounded.shadow-sm
+      h1.h5.border-bottom.pb-2.mb-0 Ny film 
 
-    form(action="/movies", method="post") 
-      .mb-3
-        label.form-label(for="title") Filmens titel:  
-        input.form-control(type="text", name="title" id="title")
-      .mb-3
-        label.form-label(for="tagline") Filmens tagline:  
-        input.form-control(type="text", name="tagline" id="tagline")
-      .mb-3
-        label.form-label(for="director") Filmens regissör:  
-        input.form-control(type="text", name="director" id="director")
-      .mb-3
-        label.form-label(for="year") Filmens genre(r), avgränsa med komma: 
-        input.form-control(type="text" name="genres"  pattern="^[a-zA-Z- ,]+")
-      .mb-3
-        label.form-label(for="year") Året filmen släpptes:  
-        input.form-control(type="text", name="year" id="year")
-      .mb-3
-        label.form-label(for="imdb_score") IMDB poäng:  
-        input.form-control(type="text", name="imdb_score" id="imdb_score")
-      button.btn.btn-primary(type="submit") Skapa film
+      form.pt-3(action="/movies", method="post") 
+        .mb-3
+          label.form-label(for="title") Filmens titel:  
+          input.form-control(type="text", name="title" id="title")
+        .mb-3
+          label.form-label(for="tagline") Filmens tagline:  
+          input.form-control(type="text", name="tagline" id="tagline")
+        .mb-3
+          label.form-label(for="director") Filmens regissör:  
+          input.form-control(type="text", name="director" id="director")
+        .mb-3
+          label.form-label(for="year") Filmens genre(r), avgränsa med komma: 
+          input.form-control(type="text" name="genres"  pattern="^[a-zA-Z- ,]+")
+        .mb-3
+          label.form-label(for="year") Året filmen släpptes:  
+          input.form-control(type="text", name="year" id="year")
+        .mb-3
+          label.form-label(for="imdb_score") IMDB poäng:  
+          input.form-control(type="text", name="imdb_score" id="imdb_score")
+        button.btn.btn-primary(type="submit") Skapa film
