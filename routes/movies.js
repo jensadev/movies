@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../models/db');
 const { param, validationResult } = require('express-validator');
+const { downloadImages } = require('../utils/download-images');
 
 /* GET users listing. */
 router.get('/', async function (req, res, next) {
@@ -88,16 +89,37 @@ router.post('/', async function (req, res, next) {
         }
         // director.insertId
 
+        // ännu mer till vår stora post metod
+        let sql, paths;
+        if (req.body.tmdb_id) {
+            // ladda ned bilder, spara sedan path i DB
+
+            // use downloadImage för att ladda ned
+            // nu ska vi bara lyckas ladda ned bilderna också :D
+            paths = await downloadImages(req.body.tmdb_id);
+
+            sql = `INSERT INTO movies 
+                (title, tagline, release_year, imdb_score, director_id, poster, backdrop, tmdb_id) 
+                VALUES (?,?,?,?,?,?,?,?)`;
+        } else {
+            // spara filmen utan bilder
+            sql = `INSERT INTO movies 
+                (title, tagline, release_year, imdb_score, director_id) 
+                VALUES (?,?,?,?,?)`;
+        }
+
         // nu kan vi skapa filmen
         // det är ingen ändring som görs i movie tabellen, kom ihåg det
 
-        const sql = `INSERT INTO movies (title, tagline, release_year, imdb_score, director_id) VALUES (?,?,?,?,?)`;
         const newMovie = await query(sql, [
             req.body.title,
             req.body.tagline,
             req.body.year,
             req.body.imdb_score,
-            director.insertId || director[0].id
+            director.insertId || director[0].id,
+            paths.poster || null,
+            paths.backdrop || null,
+            req.body.tmdb_id || null
         ]);
 
         if (newMovie.insertId > 0) {

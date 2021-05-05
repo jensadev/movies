@@ -9,7 +9,10 @@ block content
     .my-3.p-3.bg-body.rounded.shadow-sm
       h1.h5.border-bottom.pb-2.mb-0 #{movie.title} (#{movie.release_year})
       .w-100.pt-3
-        img.w-100(src="https://via.placeholder.com/780x439", alt="")
+        if movie.backdrop !== null
+          img.w-100.rounded(src="/images/movies/backdrops" + movie.backdrop, alt="backdrop")
+        else
+          img.w-100.rounded(src="https://via.placeholder.com/780x439", alt="backdrop")
       .text-muted.pt-3
         p.pb-3.mb-0
           strong.d-block.text-gray-dark #{movie.genre_list && movie.genre_list.split(',').join(', ')} 
