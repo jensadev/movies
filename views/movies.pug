@@ -14,7 +14,7 @@ block content
       each movie in movies 
         .d-flex.text-muted.pt-3
           if movie.poster !== null 
-            img.flex-shrink-0.me-2.rounded(src="/images/movies/posters" + movie.poster, alt="poster" width="92")
+            img.flex-shrink-0.me-2.rounded(src="/images/movies/posters" + movie.poster, alt="poster" width="92" height="138")
           else
             svg.bd-placeholder-img.flex-shrink-0.me-2.rounded(
               width="92"
