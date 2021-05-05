@@ -283,11 +283,28 @@ router.post('/:id', param('id').isInt(), async function (req, res, next) {
         director = await query(sql, [req.body.director]);
     }
 
-    // kolla så att filmen finns, uppdatera sedan. eller uppdatera direkt
+    let sql, paths;
+    if (req.body.tmdb_id) {
+        // vi laddar ned bilderna igen för enkelhetens skull
+        paths = await downloadImages(req.body.tmdb_id);
+        if (!paths) {
+            req.flash(
+                'error',
+                'Någonting gick fel vid kontakt med API för bilder.'
+            );
+        }
+    }
 
-    const sql = `UPDATE movies 
-    SET title=?, tagline=?, release_year=?, imdb_score=?, director_id = ?
-    WHERE id = ?`;
+    if (paths) {
+        sql = `UPDATE movies 
+        SET title=?, tagline=?, release_year=?, imdb_score=?, director_id = ?, poster = ?, backdrop = ?, tmdb_id = ?
+        WHERE id = ?`;
+    } else {
+        // spara filmen utan bilder
+        sql = `UPDATE movies 
+        SET title=?, tagline=?, release_year=?, imdb_score=?, director_id = ?
+        WHERE id = ?`;
+    }
 
     // det blir fel med params spread
 
@@ -297,6 +314,9 @@ router.post('/:id', param('id').isInt(), async function (req, res, next) {
         req.body.year,
         req.body.imdb_score,
         director.insertId || director[0].id,
+        paths.poster || null,
+        paths.backdrop || null,
+        req.body.tmdb_id || null,
         req.params.id
     ]);
 

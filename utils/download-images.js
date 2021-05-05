@@ -2,6 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
+const downloadImage = async (size, path) => {
+    return axios({
+        url: `${process.env.TMDB_BASE_URL}${size}${path}`,
+        method: 'GET',
+        responseType: 'stream'
+    });
+};
+
 const downloadImages = async (tmdbId) => {
     // do stuff
     // Make a request for a MOVIE with a given ID
@@ -29,32 +37,19 @@ const downloadImages = async (tmdbId) => {
             const backdropWriter = fs.createWriteStream(backdropPath);
             const posterWriter = fs.createWriteStream(posterPath);
 
-            // nu behöver vi bara hämta de faktiska bilderna och det gör vi med axios igen
-            axios({
-                url: `${process.env.TMDB_BASE_URL}w780${paths.backdrop}`,
-                method: 'GET',
-                responseType: 'stream'
-            })
-                .then(async (backdropResponse) => {
-                    await backdropResponse.data.pipe(backdropWriter);
+            return Promise.all([
+                downloadImage('w780', paths.backdrop),
+                downloadImage('w92', paths.poster)
+            ])
+                .then(async (results) => {
+                    await results[0].data.pipe(backdropWriter);
+                    await results[1].data.pipe(posterWriter);
+                    return paths;
                 })
                 .catch((err) => {
                     console.error(err);
+                    return false;
                 });
-
-            axios({
-                url: `${process.env.TMDB_BASE_URL}w92${paths.poster}`,
-                method: 'GET',
-                responseType: 'stream'
-            })
-                .then(async (posterResponse) => {
-                    await posterResponse.data.pipe(posterWriter);
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
-
-            return paths;
         })
         .catch(function (error) {
             // handle error

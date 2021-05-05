@@ -17,7 +17,7 @@ router.get('/flash', function (req, res, next) {
 
 // vi gör en test route
 router.get('/test', async function (req, res, next) {
-    const dl = await downloadImages('155-the-dark-knight');
+    const dl = await downloadImages('460465-mortal-kombat');
     res.json(dl);
 });
 

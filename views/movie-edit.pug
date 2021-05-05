@@ -28,4 +28,9 @@ block content
         .mb-3
           label.form-label(for="imdb_score") IMDB poäng:  
           input.form-control(type="text", name="imdb_score" id="imdb_score" value=movie.imdb_score)
+        .mb-3
+          label.form-label(for="tmdb_id") 
+            a(href="https://www.themoviedb.org/") TMDB 
+            | film id (för bilder): 
+          input.form-control(type="text", name="tmdb_id" id="tmdb_id" value=movie.tmdb_id)
         button.btn.btn-primary(type="submit") Redigera film
