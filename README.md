@@ -63,6 +63,7 @@ npm run lint
 -   [ ] Landing page för denna fantastiska sida!
 -   [ ] Översättning, språk, https://www.npmjs.com/package/i18next
 -   [ ] Validering, tvätt av indata, https://www.npmjs.com/package/express-validator
+-   [ ] Sökfunktion
 -   [ ] Movies
     -   [ ] Paginering
     -   [ ] Sortering
