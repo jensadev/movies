@@ -63,6 +63,7 @@ npm run lint
 - [ ] Översättning, språk, https://www.npmjs.com/package/i18next
 - [ ] Validering, tvätt av indata, https://www.npmjs.com/package/express-validator
 - [ ] Inloggning, användare
+  - [ ] Dashbar
   - [ ] Friends
   - [ ] Favoriter
   - [ ] Listor
