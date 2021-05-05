@@ -51,4 +51,25 @@ npm run lint
 }
 ```
 
+# TODO
 
+- [ ] Directors -> people / name / person
+- [ ] Översättning, språk
+- [ ] Validering, tvätt av indata
+- [ ] Inloggning, användare
+  - [ ] Friends
+  - [ ] Favoriter
+  - [ ] Listor
+  - [ ] Redigera, lägga till
+- [ ] Mer API, söka filmen på namn (TMDB) hämta info därifrån
+- [ ] Controllers
+- [ ] Models
+- [ ] ORM, [Sequelize](https://sequelize.org/) 
+- [ ] Microservice
+  - [ ] API routes
+  - [ ] JWT 
+- [ ] Annan frontend, headless
+  - [ ] React
+  - [ ] Vue
+  - [ ] Angular
+  - [ ] osv. 
