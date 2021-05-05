@@ -17,6 +17,8 @@ Applikationen använder sk. monolithic architecture, dvs. att den innehåller en
 * Extra, kodstil och automatisk formatering och linting med eslint och prettier.
 * Extra, prata med en extern API för att hämta bilder, https://www.themoviedb.org/ 
 
+Icon credit, https://iconscout.com/icon/film-3
+
 ## Setup
 ```
 git clone https://github.com/jensnti/movies
@@ -25,7 +27,8 @@ npm install
 ```
 
 mysql create db;
-import db från (_2021-05-05_150019_jens.sql)
+
+import db från dump, _2021-05-05_150019_jens.sql
 
 ```
 cp .env-example .env
@@ -34,6 +37,7 @@ nano .env
 ```
 npm run dev
 ```
+
 ## Kodstil
 
 ```
@@ -53,15 +57,18 @@ npm run lint
 
 # TODO
 
-- [ ] Directors -> people / name / person
-- [ ] Översättning, språk
-- [ ] Validering, tvätt av indata
+- [ ] Landing page för denna fantastiska sida!
+- [ ] Directors -> people / name / person för att tillåta actors osv.
+- [ ] View för att visa peoples
+- [ ] Översättning, språk, https://www.npmjs.com/package/i18next
+- [ ] Validering, tvätt av indata, https://www.npmjs.com/package/express-validator
 - [ ] Inloggning, användare
   - [ ] Friends
   - [ ] Favoriter
   - [ ] Listor
   - [ ] Redigera, lägga till
-- [ ] Mer API, söka filmen på namn (TMDB) hämta info därifrån
+  - [ ] Passport, https://www.npmjs.com/package/passport
+- [ ] Mer API, söka filmen på namn (TMDB) hämta info därifrån, https://developers.themoviedb.org/3/getting-started/introduction
 - [ ] Controllers
 - [ ] Models
 - [ ] ORM, [Sequelize](https://sequelize.org/) 
